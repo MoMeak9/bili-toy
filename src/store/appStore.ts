@@ -12,5 +12,9 @@ export const useAppStore = create<AppState>((set) => ({
   mode: "landing",
   error: null,
   setMode: (mode) => set({ mode }),
-  setError: (error) => set({ error, mode: error ? "error" : "editor" }),
+  setError: (error) =>
+    set((state) => ({
+      error,
+      mode: error ? "error" : state.mode,
+    })),
 }));

@@ -2,6 +2,12 @@
 // 校验文件类型并对解码失败给出可读错误。
 const ACCEPTED = ["audio/", ".wav", ".mp3", ".ogg", ".m4a", ".aac", ".flac"];
 
+type AudioContextConstructor = new () => AudioContext;
+
+type WindowWithWebkitAudioContext = Window & {
+  webkitAudioContext?: AudioContextConstructor;
+};
+
 function looksLikeAudio(file: File): boolean {
   if (file.type.startsWith("audio/")) return true;
   const name = file.name.toLowerCase();
@@ -17,7 +23,10 @@ export async function decodeFile(file: File): Promise<AudioBuffer> {
 }
 
 export async function decodeArrayBuffer(data: ArrayBuffer): Promise<AudioBuffer> {
-  const Ctx = window.AudioContext || (window as any).webkitAudioContext;
+  const Ctx = window.AudioContext || (window as WindowWithWebkitAudioContext).webkitAudioContext;
+  if (!Ctx) {
+    throw new Error("当前浏览器不支持 Web Audio。");
+  }
   const ctx = new Ctx();
   try {
     // slice(0) 防止某些浏览器 detach 原 buffer

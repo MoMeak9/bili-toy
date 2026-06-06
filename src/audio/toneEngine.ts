@@ -2,11 +2,11 @@ import * as Tone from "tone";
 import type { ABState, EditParams, PresetId } from "./types";
 import { buildPresetNodes } from "./presets";
 
-// 引擎单例：持有 GrainPlayer（支持独立变速/变调）+ 全局变调 + 预设链 + 音量。
+// 引擎单例：持有 Player（变速/淡入淡出）+ 全局变调 + 预设链 + 音量。
 // 音频图（B 态）：player -> globalPitch -> [presetNodes...] -> volume -> destination
 // A 态：player -> volume -> destination（旁路链）
 class ToneEngine {
-  private player: Tone.GrainPlayer | null = null;
+  private player: Tone.Player | null = null;
   private globalPitch: Tone.PitchShift | null = null;
   private volume: Tone.Volume | null = null;
   private presetNodes: Tone.ToneAudioNode[] = [];
@@ -31,10 +31,12 @@ class ToneEngine {
   loadBuffer(buffer: AudioBuffer): void {
     this.dispose();
     this.buffer = buffer;
-    this.player = new Tone.GrainPlayer({
+    this.player = new Tone.Player({
       url: new Tone.ToneAudioBuffer(buffer),
       loop: false,
       playbackRate: this.params.rate,
+      fadeIn: this.params.fadeIn,
+      fadeOut: this.params.fadeOut,
       onstop: () => {
         // GrainPlayer 在自然播放结束时也会触发；用位置判断是否真正到尾
         if (this.playing && this.currentPos() >= this.duration() - 0.05) {
@@ -82,7 +84,11 @@ class ToneEngine {
 
   setParams(p: EditParams): void {
     this.params = p;
-    if (this.player) this.player.playbackRate = p.rate;
+    if (this.player) {
+      this.player.playbackRate = p.rate;
+      this.player.fadeIn = p.fadeIn;
+      this.player.fadeOut = p.fadeOut;
+    }
     if (this.globalPitch) this.globalPitch.pitch = p.pitch;
     if (this.volume) this.volume.volume.value = p.volumeDb;
   }

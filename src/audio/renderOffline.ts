@@ -12,9 +12,11 @@ export async function renderProcessed(
   const renderDuration = source.duration / params.rate + 0.2;
 
   const rendered = await Tone.Offline(({ transport }) => {
-    const player = new Tone.GrainPlayer({
+    const player = new Tone.Player({
       url: new Tone.ToneAudioBuffer(source),
       playbackRate: params.rate,
+      fadeIn: params.fadeIn,
+      fadeOut: params.fadeOut,
     });
     const globalPitch = new Tone.PitchShift({ pitch: params.pitch });
     const volume = new Tone.Volume(params.volumeDb);
