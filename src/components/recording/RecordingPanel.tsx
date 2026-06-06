@@ -49,6 +49,7 @@ export function RecordingPanel({ onCancel, onError, onRecorded }: RecordingPanel
   const chunksRef = useRef<Blob[]>([]);
   const finishedRef = useRef(false);
   const mountedRef = useRef(true);
+  const cancelledRef = useRef(false);
 
   useEffect(() => {
     if (isRecordingSupported()) {
@@ -97,6 +98,7 @@ export function RecordingPanel({ onCancel, onError, onRecorded }: RecordingPanel
     beginRequest();
     chunksRef.current = [];
     finishedRef.current = false;
+    cancelledRef.current = false;
 
     try {
       const stream = await requestMicrophoneStream();
@@ -146,6 +148,7 @@ export function RecordingPanel({ onCancel, onError, onRecorded }: RecordingPanel
       }
 
       const buffer = await decodeArrayBuffer(await blob.arrayBuffer());
+      if (!mountedRef.current || cancelledRef.current) return;
       onRecorded(buffer, createRecordingFileName());
     } catch (caught) {
       reportRecordingError(caught instanceof Error ? caught.message : "录音解析失败。", onError);
@@ -163,6 +166,7 @@ export function RecordingPanel({ onCancel, onError, onRecorded }: RecordingPanel
   const handleCancel = () => {
     const recorder = recorderRef.current;
     finishedRef.current = true;
+    cancelledRef.current = true;
     if (recorder && recorder.state !== "inactive") {
       recorder.stop();
     }

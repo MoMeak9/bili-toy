@@ -5,6 +5,7 @@ import { engine } from "../audio/toneEngine";
 import { LoadingPanel } from "../components/common/LoadingPanel";
 import { ToastLayer } from "../components/common/ToastLayer";
 import { ExportDialog } from "../components/dialogs/ExportDialog";
+import { RecordingPanel } from "../components/recording/RecordingPanel";
 import { ShortcutDialog } from "../components/dialogs/ShortcutDialog";
 import { EmptyLanding } from "../components/landing/EmptyLanding";
 import { TopBar } from "../components/top-bar/TopBar";
@@ -12,6 +13,7 @@ import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 import { useAppStore } from "../store/appStore";
 import { useEditorStore } from "../store/editorStore";
 import { useProjectStore } from "../store/projectStore";
+import { useRecordingStore } from "../store/recordingStore";
 import { AppShell } from "./AppShell";
 
 type ToastState = {
@@ -57,6 +59,16 @@ export default function App() {
   const handleRecordingClick = () => {
     setError(null);
     setMode("recording");
+  };
+
+  const handleRecorded = async (buffer: AudioBuffer, fileName: string) => {
+    await enterEditorWithBuffer({ buffer, fileName, source: "recording" });
+    setToast({ open: true, message: "录音已载入。", variant: "info" });
+  };
+
+  const handleRecordingError = (message: string) => {
+    useRecordingStore.getState().setError(message);
+    setToast({ open: true, message, variant: "error" });
   };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,7 +147,17 @@ export default function App() {
 
   const renderBody = () => {
     if (mode === "loading") return <LoadingPanel />;
-    if (mode === "recording") return <LoadingPanel text="录音功能准备中..." />;
+    if (mode === "recording") {
+      return (
+        <RecordingPanel
+          onCancel={handleNewProject}
+          onError={handleRecordingError}
+          onRecorded={(buffer, fileName) => {
+            void handleRecorded(buffer, fileName);
+          }}
+        />
+      );
+    }
     if (mode === "editor" || mode === "exporting") return <AppShell />;
     if (mode === "error") {
       return (
