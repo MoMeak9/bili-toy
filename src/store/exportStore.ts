@@ -18,10 +18,16 @@ export const useExportStore = create<ExportState>((set) => ({
   status: "idle",
   progress: 0,
   error: null,
-  setFormat: (format) => set({ format }),
+  setFormat: (format) =>
+    set((state) =>
+      state.status === "rendering" || state.status === "encoding" || state.status === "downloading"
+        ? {}
+        : { format }
+    ),
   setStatus: (status) =>
     set((state) => ({ status, error: status === "error" ? state.error : null })),
-  setProgress: (progress) => set({ progress }),
+  setProgress: (progress) =>
+    set({ progress: Math.max(0, Math.min(1, progress)) }),
   setError: (error) => set((state) => ({ error, status: error ? "error" : state.status })),
   reset: () => set({ format: "wav", status: "idle", progress: 0, error: null }),
 }));
