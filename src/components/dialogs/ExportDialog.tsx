@@ -1,5 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { Download, Loader2, X } from "lucide-react";
+import { useEffect } from "react";
 import { exportProcessedAudio } from "../../audio/exportAudio";
 import type { ExportFormat, ExportStatus } from "../../audio/types";
 import { useEditorStore } from "../../store/editorStore";
@@ -33,8 +34,13 @@ export function ExportDialog({
   const setStatus = useExportStore((state) => state.setStatus);
   const setProgress = useExportStore((state) => state.setProgress);
   const setError = useExportStore((state) => state.setError);
+  const resetExport = useExportStore((state) => state.reset);
 
   const exporting = status === "rendering" || status === "encoding" || status === "downloading";
+
+  useEffect(() => {
+    if (open) resetExport();
+  }, [open, resetExport]);
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen && exporting) return;

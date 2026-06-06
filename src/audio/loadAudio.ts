@@ -11,9 +11,13 @@ export interface EnterEditorInput {
   source: AudioSource;
 }
 
-export function enterEditorWithBuffer({ buffer, fileName, source }: EnterEditorInput): void {
+export async function enterEditorWithBuffer({
+  buffer,
+  fileName,
+  source,
+}: EnterEditorInput): Promise<void> {
   useEditorStore.getState().reset();
-  engine.loadBuffer(buffer);
+  await engine.loadBuffer(buffer);
   engine.applyPreset("none");
   engine.setABState("B");
   const projectStore = useProjectStore.getState();

@@ -16,8 +16,7 @@ export function TransportBar() {
       setPlaying(false);
       return;
     }
-    await engine.start();
-    engine.play();
+    await engine.play();
     setPlaying(true);
   };
 

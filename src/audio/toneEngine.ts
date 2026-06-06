@@ -1,15 +1,18 @@
-import * as Tone from "tone";
 import type { ABState, EditParams, PresetId } from "./types";
 import { buildPresetNodes } from "./presets";
+import { loadTone } from "./lazyTone";
+import type { ToneModule } from "./presets";
+import type * as ToneType from "tone";
 
 // 引擎单例：持有 Player（变速/淡入淡出）+ 全局变调 + 预设链 + 音量。
 // 音频图（B 态）：player -> globalPitch -> [presetNodes...] -> volume -> destination
 // A 态：player -> volume -> destination（旁路链）
 class ToneEngine {
-  private player: Tone.Player | null = null;
-  private globalPitch: Tone.PitchShift | null = null;
-  private volume: Tone.Volume | null = null;
-  private presetNodes: Tone.ToneAudioNode[] = [];
+  private Tone: ToneModule | null = null;
+  private player: ToneType.Player | null = null;
+  private globalPitch: ToneType.PitchShift | null = null;
+  private volume: ToneType.Volume | null = null;
+  private presetNodes: ToneType.ToneAudioNode[] = [];
   private buffer: AudioBuffer | null = null;
 
   private preset: PresetId = "none";
@@ -24,11 +27,18 @@ class ToneEngine {
   private tickCb: ((pos: number) => void) | null = null;
   private endedCb: (() => void) | null = null;
 
+  private async ensureTone(): Promise<ToneModule> {
+    this.Tone ??= await loadTone();
+    return this.Tone;
+  }
+
   async start(): Promise<void> {
+    const Tone = await this.ensureTone();
     await Tone.start();
   }
 
-  loadBuffer(buffer: AudioBuffer): void {
+  async loadBuffer(buffer: AudioBuffer): Promise<void> {
+    const Tone = await this.ensureTone();
     this.dispose();
     this.buffer = buffer;
     this.player = new Tone.Player({
@@ -51,7 +61,7 @@ class ToneEngine {
 
   // 根据 ab 与 preset 重新连接音频图
   private rebuildGraph(): void {
-    if (!this.player || !this.globalPitch || !this.volume) return;
+    if (!this.Tone || !this.player || !this.globalPitch || !this.volume) return;
     this.player.disconnect();
     this.globalPitch.disconnect();
     this.presetNodes.forEach((n) => n.dispose());
@@ -60,8 +70,8 @@ class ToneEngine {
     if (this.ab === "A") {
       this.player.connect(this.volume);
     } else {
-      this.presetNodes = buildPresetNodes(this.preset);
-      const chain: Tone.ToneAudioNode[] = [
+      this.presetNodes = buildPresetNodes(this.Tone, this.preset);
+      const chain: ToneType.ToneAudioNode[] = [
         this.player,
         this.globalPitch,
         ...this.presetNodes,
@@ -93,8 +103,10 @@ class ToneEngine {
     if (this.volume) this.volume.volume.value = p.volumeDb;
   }
 
-  play(): void {
+  async play(): Promise<void> {
     if (!this.player || this.playing) return;
+    const Tone = await this.ensureTone();
+    void Tone.start();
     const offset = this.offsetAt;
     this.player.start(undefined, offset);
     this.startedAt = Tone.now();
@@ -115,7 +127,7 @@ class ToneEngine {
     if (wasPlaying) this.pause();
     this.offsetAt = Math.max(0, Math.min(seconds, this.duration()));
     if (this.tickCb) this.tickCb(this.offsetAt);
-    if (wasPlaying) this.play();
+    if (wasPlaying) void this.play();
   }
 
   duration(): number {
@@ -124,7 +136,7 @@ class ToneEngine {
 
   private currentPos(): number {
     if (!this.playing) return this.offsetAt;
-    const elapsed = (Tone.now() - this.startedAt) * this.params.rate;
+    const elapsed = ((this.Tone?.now() ?? this.startedAt) - this.startedAt) * this.params.rate;
     return Math.min(this.offsetAt + elapsed, this.duration());
   }
 

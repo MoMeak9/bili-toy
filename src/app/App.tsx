@@ -68,7 +68,7 @@ export default function App() {
     setError(null);
     try {
       const buffer = await decodeFile(file);
-      enterEditorWithBuffer({ buffer, fileName: file.name, source: "upload" });
+      await enterEditorWithBuffer({ buffer, fileName: file.name, source: "upload" });
       setToast({ open: true, message: "音频已载入。", variant: "info" });
     } catch (caught) {
       fail(caught instanceof Error ? caught.message : "音频解析失败。");
@@ -84,7 +84,7 @@ export default function App() {
       const response = await fetch(url);
       if (!response.ok) throw new Error("示例音频加载失败。");
       const buffer = await decodeArrayBuffer(await response.arrayBuffer());
-      enterEditorWithBuffer({ buffer, fileName: "示例音频.wav", source: "sample" });
+      await enterEditorWithBuffer({ buffer, fileName: "示例音频.wav", source: "sample" });
       setToast({
         open: true,
         message: "示例已打开。试试点击机器人或魔鬼低音。",
@@ -112,8 +112,7 @@ export default function App() {
       setPlaying(false);
       return;
     }
-    await engine.start();
-    engine.play();
+    await engine.play();
     setPlaying(true);
   };
 

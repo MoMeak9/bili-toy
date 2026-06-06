@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
-import WaveSurfer from "wavesurfer.js";
+import type WaveSurfer from "wavesurfer.js";
+import { loadWaveSurfer } from "../../audio/lazyWaveform";
 import { engine } from "../../audio/toneEngine";
 import { useEditorStore } from "../../store/editorStore";
 import { useProjectStore } from "../../store/projectStore";
@@ -27,28 +28,38 @@ export function WaveformEditor() {
   useEffect(() => {
     if (!containerRef.current || !buffer) return;
 
-    const waveSurfer = WaveSurfer.create({
-      barGap: 2,
-      barRadius: 2,
-      barWidth: 3,
-      container: containerRef.current,
-      cursorColor: "#2563eb",
-      height: 128,
-      interact: true,
-      normalize: true,
-      progressColor: "#2563eb",
-      waveColor: "#cbd5e1",
+    let active = true;
+    let waveSurfer: WaveSurfer | null = null;
+    const container = containerRef.current;
+
+    void loadWaveSurfer().then((WaveSurferCtor) => {
+      if (!active || !container) return;
+      waveSurfer = WaveSurferCtor.create({
+        barGap: 2,
+        barRadius: 2,
+        barWidth: 3,
+        container,
+        cursorColor: "#2563eb",
+        height: 128,
+        interact: true,
+        normalize: true,
+        progressColor: "#2563eb",
+        waveColor: "#cbd5e1",
+      });
+
+      waveSurfer.load("", peaks, duration);
+      waveSurfer.on("interaction", (relativeX) => {
+        const nextTime =
+          typeof relativeX === "number" ? relativeX * duration : waveSurfer?.getCurrentTime() ?? 0;
+        engine.seek(nextTime);
+      });
+
+      waveSurferRef.current = waveSurfer;
     });
 
-    waveSurfer.load("", peaks, duration);
-    waveSurfer.on("interaction", (relativeX) => {
-      const nextTime = typeof relativeX === "number" ? relativeX * duration : waveSurfer.getCurrentTime();
-      engine.seek(nextTime);
-    });
-
-    waveSurferRef.current = waveSurfer;
     return () => {
-      waveSurfer.destroy();
+      active = false;
+      waveSurfer?.destroy();
       waveSurferRef.current = null;
     };
   }, [buffer, duration, peaks]);

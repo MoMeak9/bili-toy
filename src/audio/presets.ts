@@ -1,5 +1,7 @@
-import * as Tone from "tone";
+import type * as ToneType from "tone";
 import type { PresetId, PresetMeta } from "./types";
+
+export type ToneModule = typeof ToneType;
 
 export const NONE_PRESET: PresetMeta = {
   id: "none",
@@ -95,7 +97,7 @@ export const PRESET_LIST: PresetMeta[] = [
 
 // 为某个预设构建一串 Tone 效果节点（按顺序串联）。
 // 返回的节点未连接；调用方负责 chain。none 返回空数组（直通）。
-export function buildPresetNodes(id: PresetId): Tone.ToneAudioNode[] {
+export function buildPresetNodes(Tone: ToneModule, id: PresetId): ToneType.ToneAudioNode[] {
   switch (id) {
     case "robot":
       return [
@@ -153,7 +155,10 @@ export function getPresetMeta(id: PresetId): PresetMeta {
   return PRESET_LIST.find((preset) => preset.id === id) ?? NONE_PRESET;
 }
 
-function setWet<T extends Tone.ToneAudioNode & { wet: { value: number } }>(node: T, wet: number): T {
+function setWet<T extends ToneType.ToneAudioNode & { wet: { value: number } }>(
+  node: T,
+  wet: number,
+): T {
   node.wet.value = wet;
   return node;
 }
