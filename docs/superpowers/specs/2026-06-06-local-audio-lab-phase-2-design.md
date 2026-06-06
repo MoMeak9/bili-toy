@@ -5,6 +5,14 @@
 - 来源需求：[docs/PRD.md](../../PRD.md)、MVP 实现状态、用户二阶段规划
 - 形态：一个二阶段总 spec + 五个子 spec 摘要，支持后续并行实现
 
+## 0. 子 Spec 摘要文件
+
+- [录音闭环](./2026-06-06-phase-2-recording-loop-summary.md)
+- [导出增强](./2026-06-06-phase-2-export-enhancement-summary.md)
+- [效果升级](./2026-06-06-phase-2-effect-upgrade-summary.md)
+- [专业分析](./2026-06-06-phase-2-analysis-summary.md)
+- [性能整理](./2026-06-06-phase-2-performance-summary.md)
+
 ## 1. 目标与范围
 
 二阶段在已完成 MVP 的单页、本地处理音频工具之上，补齐 PRD 中仍未落地的核心能力：录音闭环、导出增强、效果升级、专业分析，以及首屏性能整理。
