@@ -12,7 +12,7 @@ import { formatTime } from "../ui/format";
 
 interface RecordingPanelProps {
   onCancel: () => void;
-  onRecorded: (buffer: AudioBuffer, fileName: string) => void;
+  onRecorded: (buffer: AudioBuffer, fileName: string) => Promise<void>;
   onError: (message: string) => void;
 }
 
@@ -149,8 +149,9 @@ export function RecordingPanel({ onCancel, onError, onRecorded }: RecordingPanel
 
       const buffer = await decodeArrayBuffer(await blob.arrayBuffer());
       if (!mountedRef.current || cancelledRef.current) return;
-      onRecorded(buffer, createRecordingFileName());
+      await onRecorded(buffer, createRecordingFileName());
     } catch (caught) {
+      if (!mountedRef.current || cancelledRef.current) return;
       reportRecordingError(caught instanceof Error ? caught.message : "录音解析失败。", onError);
     } finally {
       clearRecorder();

@@ -152,9 +152,7 @@ export default function App() {
         <RecordingPanel
           onCancel={handleNewProject}
           onError={handleRecordingError}
-          onRecorded={(buffer, fileName) => {
-            void handleRecorded(buffer, fileName);
-          }}
+          onRecorded={handleRecorded}
         />
       );
     }
