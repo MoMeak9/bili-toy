@@ -13,6 +13,7 @@ interface ProjectState {
     fileName: string;
     buffer: AudioBuffer;
     source: AudioSource;
+    analysisSummary?: AnalysisSummary | null;
   }) => void;
   setAnalysisSummary: (summary: AnalysisSummary | null) => void;
   clear: () => void;
@@ -26,7 +27,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
   source: null,
   buffer: null,
   analysisSummary: null,
-  setProject: ({ fileName, buffer, source }) =>
+  setProject: ({ fileName, buffer, source, analysisSummary = null }) =>
     set({
       fileName,
       buffer,
@@ -34,7 +35,7 @@ export const useProjectStore = create<ProjectState>((set) => ({
       duration: buffer.duration,
       sampleRate: buffer.sampleRate,
       numberOfChannels: buffer.numberOfChannels,
-      analysisSummary: null,
+      analysisSummary,
     }),
   setAnalysisSummary: (analysisSummary) => set({ analysisSummary }),
   clear: () =>

@@ -1,3 +1,4 @@
+import { analyzeBuffer } from "./analysis/summary";
 import { engine } from "./toneEngine";
 import type { AudioSource } from "./types";
 import { useAppStore } from "../store/appStore";
@@ -15,7 +16,9 @@ export function enterEditorWithBuffer({ buffer, fileName, source }: EnterEditorI
   engine.loadBuffer(buffer);
   engine.applyPreset("none");
   engine.setABState("B");
-  useProjectStore.getState().setProject({ buffer, fileName, source });
+  const projectStore = useProjectStore.getState();
+  projectStore.setProject({ buffer, fileName, source });
+  projectStore.setAnalysisSummary(analyzeBuffer(buffer));
   useAppStore.getState().setMode("editor");
   useAppStore.getState().setError(null);
 }
