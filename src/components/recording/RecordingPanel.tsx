@@ -118,11 +118,8 @@ export function RecordingPanel({ onCancel, onError, onRecorded }: RecordingPanel
       recorder.onerror = () => {
         finishedRef.current = true;
         reportRecordingError("录音过程中发生错误。", onError);
-        if (recorder.state !== "inactive") {
-          recorder.stop();
-        } else {
-          clearRecorder();
-        }
+        if (recorder.state !== "inactive") recorder.stop();
+        clearRecorder();
       };
 
       recorder.onstop = () => {
