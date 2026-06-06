@@ -4,15 +4,6 @@ import { PRESET_LIST } from "../../audio/presets";
 import { engine } from "../../audio/toneEngine";
 import { useEditorStore } from "../../store/editorStore";
 
-const PRESET_HELP: Record<PresetId, string> = {
-  none: "直通",
-  robot: "调制与轻微失真",
-  devil: "低沉降调",
-  chipmunk: "明亮升调",
-  phone: "窄频电话感",
-  broadcast: "压缩提亮",
-};
-
 export function PresetPanel() {
   const currentPreset = useEditorStore((state) => state.currentPreset);
   const setAB = useEditorStore((state) => state.setAB);
@@ -44,7 +35,7 @@ export function PresetPanel() {
             type="button"
           >
             <span className="block text-sm font-semibold">{preset.label}</span>
-            <span className="mt-1 block text-xs text-slate-500">{PRESET_HELP[preset.id]}</span>
+            <span className="mt-1 block text-xs text-slate-500">{preset.description}</span>
           </button>
         ))}
       </div>

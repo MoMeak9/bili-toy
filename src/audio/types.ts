@@ -34,7 +34,11 @@ export type PresetId =
   | "devil"
   | "chipmunk"
   | "phone"
-  | "broadcast";
+  | "broadcast"
+  | "alien"
+  | "tape"
+  | "cave"
+  | "eightBit";
 
 export interface EditParams {
   volumeDb: number;   // 默认 0
@@ -60,7 +64,14 @@ export const DEFAULT_PARAMS: EditParams = {
   fadeOut: 0,
 };
 
+export interface PresetChainStep {
+  label: string;
+  summary: string;
+}
+
 export interface PresetMeta {
   id: PresetId;
-  label: string;       // 中文名
+  label: string;
+  description: string;
+  chain: PresetChainStep[];
 }
