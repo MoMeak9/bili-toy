@@ -10,9 +10,17 @@ interface ExportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onError: (message: string) => void;
+  onExportStart?: () => void;
+  onExportEnd?: () => void;
 }
 
-export function ExportDialog({ open, onOpenChange, onError }: ExportDialogProps) {
+export function ExportDialog({
+  open,
+  onOpenChange,
+  onError,
+  onExportStart,
+  onExportEnd,
+}: ExportDialogProps) {
   const [busy, setBusy] = useState(false);
   const buffer = useProjectStore((state) => state.buffer);
   const fileName = useProjectStore((state) => state.fileName);
@@ -22,6 +30,7 @@ export function ExportDialog({ open, onOpenChange, onError }: ExportDialogProps)
   const exportWav = async () => {
     if (!buffer || busy) return;
     setBusy(true);
+    onExportStart?.();
     try {
       const rendered = await renderProcessed(buffer, currentPreset, params);
       const wav = encodeWav(rendered);
@@ -32,6 +41,7 @@ export function ExportDialog({ open, onOpenChange, onError }: ExportDialogProps)
       onError(error instanceof Error ? error.message : "导出失败，请稍后再试。");
     } finally {
       setBusy(false);
+      onExportEnd?.();
     }
   };
 

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { decodeArrayBuffer, decodeFile } from "../audio/decode";
+import { enterEditorWithBuffer } from "../audio/loadAudio";
 import { engine } from "../audio/toneEngine";
 import { LoadingPanel } from "../components/common/LoadingPanel";
 import { ToastLayer } from "../components/common/ToastLayer";
@@ -26,7 +27,6 @@ export default function App() {
   const setError = useAppStore((state) => state.setError);
   const setMode = useAppStore((state) => state.setMode);
   const clearProject = useProjectStore((state) => state.clear);
-  const setProject = useProjectStore((state) => state.setProject);
   const isPlaying = useEditorStore((state) => state.isPlaying);
   const resetEditor = useEditorStore((state) => state.reset);
   const setPlayhead = useEditorStore((state) => state.setPlayhead);
@@ -49,28 +49,14 @@ export default function App() {
     setToast({ open: true, message, variant: "error" });
   };
 
-  const enterEditor = async (
-    buffer: AudioBuffer,
-    fileName: string,
-    source: "sample" | "upload",
-  ) => {
-    resetEditor();
-    engine.loadBuffer(buffer);
-    engine.applyPreset("none");
-    engine.setABState("B");
-    setProject({ buffer, fileName, source });
-    setMode("editor");
-    setError(null);
-    setToast({
-      open: true,
-      message: source === "sample" ? "示例已打开。试试点击机器人或魔鬼低音。" : "音频已载入。",
-      variant: "info",
-    });
-  };
-
   const handleUploadClick = () => {
     void engine.start();
     fileInputRef.current?.click();
+  };
+
+  const handleRecordingClick = () => {
+    setError(null);
+    setMode("recording");
   };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,7 +68,8 @@ export default function App() {
     setError(null);
     try {
       const buffer = await decodeFile(file);
-      await enterEditor(buffer, file.name, "upload");
+      enterEditorWithBuffer({ buffer, fileName: file.name, source: "upload" });
+      setToast({ open: true, message: "音频已载入。", variant: "info" });
     } catch (caught) {
       fail(caught instanceof Error ? caught.message : "音频解析失败。");
     }
@@ -97,7 +84,12 @@ export default function App() {
       const response = await fetch(url);
       if (!response.ok) throw new Error("示例音频加载失败。");
       const buffer = await decodeArrayBuffer(await response.arrayBuffer());
-      await enterEditor(buffer, "示例音频.wav", "sample");
+      enterEditorWithBuffer({ buffer, fileName: "示例音频.wav", source: "sample" });
+      setToast({
+        open: true,
+        message: "示例已打开。试试点击机器人或魔鬼低音。",
+        variant: "info",
+      });
     } catch (caught) {
       fail(caught instanceof Error ? caught.message : "示例音频加载失败。");
     }
@@ -134,9 +126,18 @@ export default function App() {
     setToast({ open: true, message, variant: "error" });
   };
 
+  const handleExportStart = () => setMode("exporting");
+  const handleExportEnd = () => {
+    const appStore = useAppStore.getState();
+    if (appStore.mode === "exporting") {
+      appStore.setMode("editor");
+    }
+  };
+
   const renderBody = () => {
     if (mode === "loading") return <LoadingPanel />;
-    if (mode === "editor") return <AppShell />;
+    if (mode === "recording") return <LoadingPanel text="录音功能准备中..." />;
+    if (mode === "editor" || mode === "exporting") return <AppShell />;
     if (mode === "error") {
       return (
         <div className="flex min-h-full flex-col items-center justify-center gap-4 px-5 text-center">
@@ -154,12 +155,18 @@ export default function App() {
         </div>
       );
     }
-    return <EmptyLanding onSample={handleSample} onUpload={handleUploadClick} />;
+    return (
+      <EmptyLanding
+        onRecording={handleRecordingClick}
+        onSample={handleSample}
+        onUpload={handleUploadClick}
+      />
+    );
   };
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-white text-slate-950">
-      {mode === "editor" ? (
+      {mode === "editor" || mode === "exporting" ? (
         <TopBar
           onExport={() => setExportOpen(true)}
           onNewProject={handleNewProject}
@@ -174,7 +181,13 @@ export default function App() {
         type="file"
       />
       <div className="min-h-0 flex-1">{renderBody()}</div>
-      <ExportDialog onError={showError} onOpenChange={setExportOpen} open={exportOpen} />
+      <ExportDialog
+        onError={showError}
+        onExportEnd={handleExportEnd}
+        onExportStart={handleExportStart}
+        onOpenChange={setExportOpen}
+        open={exportOpen}
+      />
       <ShortcutDialog onOpenChange={setShortcutOpen} open={shortcutOpen} />
       <ToastLayer
         message={toast.message}

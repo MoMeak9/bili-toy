@@ -3,9 +3,10 @@ import { Mic, PlayCircle, ShieldCheck, Upload } from "lucide-react";
 interface EmptyLandingProps {
   onUpload: () => void;
   onSample: () => void;
+  onRecording: () => void;
 }
 
-export function EmptyLanding({ onUpload, onSample }: EmptyLandingProps) {
+export function EmptyLanding({ onUpload, onSample, onRecording }: EmptyLandingProps) {
   return (
     <main className="flex min-h-full flex-col items-center justify-center gap-7 px-5 py-10 text-center">
       <div className="flex max-w-2xl flex-col items-center gap-3">
@@ -30,9 +31,8 @@ export function EmptyLanding({ onUpload, onSample }: EmptyLandingProps) {
           上传音频
         </button>
         <button
-          className="inline-flex min-h-12 cursor-not-allowed items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-400"
-          disabled
-          title="录音功能将在二期推出"
+          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-800 transition hover:border-blue-300 hover:bg-blue-50"
+          onClick={onRecording}
           type="button"
         >
           <Mic size={18} />

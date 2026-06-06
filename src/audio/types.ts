@@ -8,6 +8,26 @@ export type AppMode =
 
 export type ABState = "A" | "B"; // A=原始, B=处理后
 
+export type AudioSource = "upload" | "sample" | "recording";
+
+export type RecordingStatus =
+  | "idle"
+  | "requesting"
+  | "recording"
+  | "processing"
+  | "unsupported"
+  | "error";
+
+export type ExportFormat = "wav" | "mp3";
+
+export type ExportStatus =
+  | "idle"
+  | "rendering"
+  | "encoding"
+  | "downloading"
+  | "done"
+  | "error";
+
 export type PresetId =
   | "none"
   | "robot"
@@ -22,6 +42,14 @@ export interface EditParams {
   pitch: number;      // 变调 semitone 默认 0
   fadeIn: number;     // 秒 默认 0
   fadeOut: number;    // 秒 默认 0
+}
+
+export interface AnalysisSummary {
+  duration: number;
+  sampleRate: number;
+  numberOfChannels: number;
+  peak: number;
+  rms: number;
 }
 
 export const DEFAULT_PARAMS: EditParams = {
