@@ -48,9 +48,8 @@ export function WaveformEditor() {
       });
 
       waveSurfer.load("", peaks, duration);
-      waveSurfer.on("interaction", (relativeX) => {
-        const nextTime =
-          typeof relativeX === "number" ? relativeX * duration : waveSurfer?.getCurrentTime() ?? 0;
+      waveSurfer.on("interaction", (time) => {
+        const nextTime = typeof time === "number" ? time : waveSurfer?.getCurrentTime() ?? 0;
         engine.seek(nextTime);
       });
 

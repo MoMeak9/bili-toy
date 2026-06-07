@@ -7,6 +7,7 @@ import {
   requestMicrophoneStream,
   stopStream,
 } from "../../audio/recording";
+import { engine } from "../../audio/toneEngine";
 import { useRecordingStore } from "../../store/recordingStore";
 import { formatTime } from "../ui/format";
 
@@ -52,6 +53,7 @@ export function RecordingPanel({ onCancel, onError, onRecorded }: RecordingPanel
   const cancelledRef = useRef(false);
 
   useEffect(() => {
+    mountedRef.current = true;
     if (isRecordingSupported()) {
       reset();
       return;
@@ -101,6 +103,7 @@ export function RecordingPanel({ onCancel, onError, onRecorded }: RecordingPanel
     cancelledRef.current = false;
 
     try {
+      void engine.start();
       const stream = await requestMicrophoneStream();
       if (!mountedRef.current) {
         stopStream(stream);
