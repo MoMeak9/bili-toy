@@ -22,6 +22,9 @@ type ToastState = {
   variant: "info" | "error";
 };
 
+const EDITOR_HINT_SESSION_KEY = "local-audio-lab-editor-keyboard-hint-shown";
+const EDITOR_HINT_MESSAGE = "提示：按 Space 播放/暂停，按 ? 查看全部快捷键。";
+
 export default function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mode = useAppStore((state) => state.mode);
@@ -40,6 +43,12 @@ export default function App() {
     message: "",
     variant: "info",
   });
+
+  const showEditorHintOnce = () => {
+    if (window.sessionStorage.getItem(EDITOR_HINT_SESSION_KEY) === "true") return;
+    window.sessionStorage.setItem(EDITOR_HINT_SESSION_KEY, "true");
+    setToast({ open: true, message: EDITOR_HINT_MESSAGE, variant: "info" });
+  };
 
   useEffect(() => {
     engine.onTick((position) => setPlayhead(position));
@@ -63,7 +72,7 @@ export default function App() {
 
   const handleRecorded = async (buffer: AudioBuffer, fileName: string) => {
     await enterEditorWithBuffer({ buffer, fileName, source: "recording" });
-    setToast({ open: true, message: "录音已载入。", variant: "info" });
+    showEditorHintOnce();
   };
 
   const handleRecordingError = (message: string) => {
@@ -81,7 +90,7 @@ export default function App() {
     try {
       const buffer = await decodeFile(file);
       await enterEditorWithBuffer({ buffer, fileName: file.name, source: "upload" });
-      setToast({ open: true, message: "音频已载入。", variant: "info" });
+      showEditorHintOnce();
     } catch (caught) {
       fail(caught instanceof Error ? caught.message : "音频解析失败。");
     }
@@ -97,11 +106,7 @@ export default function App() {
       if (!response.ok) throw new Error("示例音频加载失败。");
       const buffer = await decodeArrayBuffer(await response.arrayBuffer());
       await enterEditorWithBuffer({ buffer, fileName: "示例音频.wav", source: "sample" });
-      setToast({
-        open: true,
-        message: "示例已打开。试试点击机器人或魔鬼低音。",
-        variant: "info",
-      });
+      showEditorHintOnce();
     } catch (caught) {
       fail(caught instanceof Error ? caught.message : "示例音频加载失败。");
     }
