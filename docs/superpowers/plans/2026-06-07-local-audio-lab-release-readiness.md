@@ -89,7 +89,7 @@ Create `docs/superpowers/qa/2026-06-07-release-readiness-manual-qa.md` with this
 | Microphone deny path | Chrome desktop | Reset site microphone permission, click `开始录音`, deny permission. | Error text is understandable; app does not white-screen; user can cancel/return; repeating the flow behaves predictably. | Pending |  |
 | WAV playable download | Chrome desktop | Open sample, choose a preset, open export dialog, export WAV, play the downloaded file locally. | Downloaded `.wav` is not 0 bytes, plays in local player/browser, duration is close to source, selected preset is audible. | Pending |  |
 | MP3 playable download | Chrome desktop | Open sample, choose MP3 in export dialog, export MP3, play the downloaded file locally. | Downloaded `.mp3` is not 0 bytes, plays in local player/browser, duration is close to source. | Pending |  |
-| Export failure recovery | Chrome desktop | Temporarily force `exportProcessedAudio` to throw during local manual testing, export, then remove the temporary change. | Dialog shows error; current project, preset, and params remain; user can close dialog or retry after restoring implementation. | Pending | Do not commit the temporary throw. |
+| Export failure recovery | Chrome desktop | In DevTools Console before exporting, run `const originalCreateObjectURL = URL.createObjectURL; URL.createObjectURL = () => { throw new Error("Manual QA forced download failure."); };`, then export once, restore with `URL.createObjectURL = originalCreateObjectURL`, and reload. | Dialog shows error; current project, preset, and params remain; user can close dialog or retry after restoring browser state. | Pending | Do not edit source files for this check. |
 | Mobile core loop | Real mobile browser or responsive viewport | Confirm landing CTAs, recording entry, sample-to-editor, bottom tabs `预设` / `效果` / `参数` / `分析`, and export dialog. | Core loop is usable and controls do not overlap. | Pending |  |
 
 ## P1 Keyboard Regression
@@ -516,28 +516,22 @@ Update the `MP3 playable download` row:
 
 - [ ] **Step 6: Complete export failure recovery**
 
-Temporarily edit `src/audio/exportAudio.ts` during manual local testing only:
-
-```ts
-export async function exportProcessedAudio(): Promise<ArrayBuffer> {
-  throw new Error("Manual QA forced export failure.");
-}
-```
-
-Then:
+Use DevTools Console fault injection, without editing source files:
 
 1. Open sample.
 2. Select a preset and adjust one parameter.
-3. Open export dialog and click export.
-4. Confirm the error appears.
-5. Confirm editor project, preset, and params remain.
-6. Restore `src/audio/exportAudio.ts` immediately.
-7. Run `git diff src/audio/exportAudio.ts` and confirm no diff remains.
+3. Open export dialog.
+4. In DevTools Console, run `const originalCreateObjectURL = URL.createObjectURL; URL.createObjectURL = () => { throw new Error("Manual QA forced download failure."); };`.
+5. Click export once.
+6. Confirm the dialog shows an error.
+7. Confirm editor project, preset, and params remain.
+8. Restore browser state with `URL.createObjectURL = originalCreateObjectURL`.
+9. Reload the page.
 
 Update the `Export failure recovery` row:
 
 ```markdown
-| Export failure recovery | Chrome desktop | Temporarily force `exportProcessedAudio` to throw during local manual testing, export, then remove the temporary change. | Dialog shows error; current project, preset, and params remain; user can close dialog or retry after restoring implementation. | Pass | Forced `Manual QA forced export failure.` locally; restored file; `git diff src/audio/exportAudio.ts` empty. |
+| Export failure recovery | Chrome desktop | In DevTools Console before exporting, run `const originalCreateObjectURL = URL.createObjectURL; URL.createObjectURL = () => { throw new Error("Manual QA forced download failure."); };`, then export once, restore with `URL.createObjectURL = originalCreateObjectURL`, and reload. | Dialog shows error; current project, preset, and params remain; user can close dialog or retry after restoring browser state. | Pass | Forced `Manual QA forced download failure.` via DevTools Console; restored `URL.createObjectURL`; reloaded page. Do not edit source files for this check. |
 ```
 
 - [ ] **Step 7: Complete mobile core loop**
