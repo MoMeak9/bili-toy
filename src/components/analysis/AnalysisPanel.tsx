@@ -36,13 +36,13 @@ export function AnalysisPanel() {
 
   return (
     <section className="flex flex-col gap-4">
-      <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-        <BarChart3 size={16} />
+      <div className="flex items-center gap-2 text-sm font-bold text-slate-800">
+        <BarChart3 size={16} className="text-indigo-500" />
         分析
       </div>
 
       {analysisSummary ? (
-        <dl className="grid gap-2 rounded-lg bg-slate-50 p-3 text-xs">
+        <dl className="grid gap-2 rounded-2xl bg-slate-50 p-3 text-xs">
           <div className="flex items-center justify-between gap-3">
             <dt className="text-slate-500">时长</dt>
             <dd className="tabular-nums font-medium text-slate-800">
@@ -75,13 +75,13 @@ export function AnalysisPanel() {
           </div>
         </dl>
       ) : (
-        <p className="rounded-lg bg-slate-50 p-3 text-xs leading-5 text-slate-500">
+        <p className="rounded-2xl bg-slate-50 p-3 text-xs leading-5 text-slate-500">
           载入音频后显示分析数据。
         </p>
       )}
 
       <button
-        className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+        className="lab-button-primary h-10 min-h-0 px-3 disabled:cursor-not-allowed disabled:opacity-50"
         disabled={!buffer || isGenerating}
         onClick={generateSpectrum}
         type="button"
@@ -91,14 +91,14 @@ export function AnalysisPanel() {
       </button>
 
       {error ? (
-        <p className="rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700">{error}</p>
+        <p className="rounded-2xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">{error}</p>
       ) : null}
 
       {spectrum.length > 0 ? (
-        <div className="flex h-28 items-end gap-1 rounded-lg bg-slate-950 p-2" aria-label="频谱图">
+        <div className="flex h-28 items-end gap-1 rounded-2xl bg-slate-950 p-2" aria-label="频谱图">
           {spectrum.map((point) => (
             <div
-              className="min-w-0 flex-1 rounded-sm bg-blue-400"
+              className="min-w-0 flex-1 rounded-sm bg-indigo-300"
               key={point.frequency}
               style={{ height: `${Math.max(point.magnitude * 100, 2)}%` }}
               title={`${formatFrequency(point.frequency)} ${formatMagnitude(point.magnitude)}`}

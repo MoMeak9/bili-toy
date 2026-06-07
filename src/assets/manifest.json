@@ -1,0 +1,254 @@
+[
+  {
+    "file": "00_full_style_board.png",
+    "description": "A风格完整设计板",
+    "crop_box_xyxy": [
+      0,
+      0,
+      1672,
+      941
+    ],
+    "size": [
+      1672,
+      941
+    ]
+  },
+  {
+    "file": "01_desktop_editor_main.png",
+    "description": "桌面端编辑器主界面",
+    "crop_box_xyxy": [
+      16,
+      32,
+      1245,
+      606
+    ],
+    "size": [
+      1229,
+      574
+    ]
+  },
+  {
+    "file": "02_mobile_editor.png",
+    "description": "移动端编辑器界面",
+    "crop_box_xyxy": [
+      1284,
+      38,
+      1635,
+      708
+    ],
+    "size": [
+      351,
+      670
+    ]
+  },
+  {
+    "file": "03_landing_state.png",
+    "description": "开箱即用 Landing 状态",
+    "crop_box_xyxy": [
+      16,
+      642,
+      426,
+      902
+    ],
+    "size": [
+      410,
+      260
+    ]
+  },
+  {
+    "file": "04_recording_state.png",
+    "description": "录音状态卡片",
+    "crop_box_xyxy": [
+      449,
+      643,
+      713,
+      902
+    ],
+    "size": [
+      264,
+      259
+    ]
+  },
+  {
+    "file": "05_export_dialog.png",
+    "description": "导出弹窗",
+    "crop_box_xyxy": [
+      733,
+      644,
+      1010,
+      902
+    ],
+    "size": [
+      277,
+      258
+    ]
+  },
+  {
+    "file": "06_shortcut_dialog.png",
+    "description": "快捷键弹窗",
+    "crop_box_xyxy": [
+      1030,
+      644,
+      1260,
+      902
+    ],
+    "size": [
+      230,
+      258
+    ]
+  },
+  {
+    "file": "07_left_presets_panel.png",
+    "description": "左侧声音预设与效果链面板",
+    "crop_box_xyxy": [
+      20,
+      83,
+      274,
+      604
+    ],
+    "size": [
+      254,
+      521
+    ]
+  },
+  {
+    "file": "08_waveform_editor_area.png",
+    "description": "波形编辑与播放控制区",
+    "crop_box_xyxy": [
+      286,
+      91,
+      1031,
+      431
+    ],
+    "size": [
+      745,
+      340
+    ]
+  },
+  {
+    "file": "09_right_inspector_export.png",
+    "description": "右侧参数与导出设置面板",
+    "crop_box_xyxy": [
+      1039,
+      93,
+      1227,
+      584
+    ],
+    "size": [
+      188,
+      491
+    ]
+  },
+  {
+    "file": "10_landing_cta_buttons.png",
+    "description": "首页上传/录音/示例 CTA",
+    "crop_box_xyxy": [
+      37,
+      704,
+      391,
+      777
+    ],
+    "size": [
+      354,
+      73
+    ]
+  },
+  {
+    "file": "11_fun_preset_cards.png",
+    "description": "趣味预设卡片组",
+    "crop_box_xyxy": [
+      40,
+      185,
+      242,
+      326
+    ],
+    "size": [
+      202,
+      141
+    ]
+  },
+  {
+    "file": "12_mobile_bottom_sheet.png",
+    "description": "移动端底部抽屉",
+    "crop_box_xyxy": [
+      1290,
+      338,
+      1626,
+      703
+    ],
+    "size": [
+      336,
+      365
+    ]
+  },
+  {
+    "file": "preset_robot.png",
+    "description": "机器人预设卡片",
+    "crop_box_xyxy": [
+      43,
+      186,
+      108,
+      254
+    ],
+    "size": [
+      65,
+      68
+    ]
+  },
+  {
+    "file": "preset_demon.png",
+    "description": "魔鬼低音预设卡片",
+    "crop_box_xyxy": [
+      118,
+      186,
+      184,
+      254
+    ],
+    "size": [
+      66,
+      68
+    ]
+  },
+  {
+    "file": "preset_squirrel.png",
+    "description": "松鼠音预设卡片",
+    "crop_box_xyxy": [
+      196,
+      186,
+      261,
+      254
+    ],
+    "size": [
+      65,
+      68
+    ]
+  },
+  {
+    "file": "preset_phone.png",
+    "description": "电话音预设卡片",
+    "crop_box_xyxy": [
+      43,
+      267,
+      108,
+      334
+    ],
+    "size": [
+      65,
+      67
+    ]
+  },
+  {
+    "file": "preset_broadcast.png",
+    "description": "广播主持预设卡片",
+    "crop_box_xyxy": [
+      119,
+      267,
+      184,
+      334
+    ],
+    "size": [
+      65,
+      67
+    ]
+  }
+]

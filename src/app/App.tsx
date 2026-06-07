@@ -161,7 +161,15 @@ export default function App() {
         />
       );
     }
-    if (mode === "editor" || mode === "exporting") return <AppShell />;
+    if (mode === "editor" || mode === "exporting") {
+      return (
+        <AppShell
+          onExport={() => setExportOpen(true)}
+          onRecording={handleRecordingClick}
+          onUpload={handleUploadClick}
+        />
+      );
+    }
     if (mode === "error") {
       return (
         <div className="flex min-h-full flex-col items-center justify-center gap-4 px-5 text-center">
@@ -189,7 +197,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-white text-slate-950">
+    <div className="flex h-full min-h-0 flex-col text-slate-950">
       {mode === "editor" || mode === "exporting" ? (
         <TopBar
           onExport={() => setExportOpen(true)}

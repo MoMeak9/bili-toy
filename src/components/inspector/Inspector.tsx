@@ -58,12 +58,12 @@ export function Inspector() {
               step={row.step}
               value={[value]}
             >
-              <Slider.Track className="relative h-1 grow overflow-hidden rounded-full bg-slate-200">
-                <Slider.Range className="absolute h-full rounded-full bg-blue-600" />
+              <Slider.Track className="relative h-1.5 grow overflow-hidden rounded-full bg-slate-200">
+                <Slider.Range className="absolute h-full rounded-full bg-indigo-500" />
               </Slider.Track>
               <Slider.Thumb
                 aria-label={row.label}
-                className="block h-4 w-4 rounded-full border border-blue-600 bg-white shadow-sm outline-none ring-blue-200 transition focus:ring-4"
+                className="block h-4 w-4 rounded-full border border-indigo-500 bg-white shadow-sm outline-none ring-indigo-200 transition focus:ring-4"
               />
             </Slider.Root>
           </div>

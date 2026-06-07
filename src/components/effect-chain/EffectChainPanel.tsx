@@ -16,12 +16,12 @@ export function EffectChainPanel() {
   return (
     <section className="flex flex-col gap-3">
       <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
-          <Route size={16} />
-          效果链
+        <div className="flex items-center gap-2 text-sm font-bold text-slate-800">
+          <Route size={16} className="text-indigo-500" />
+          专业效果链
         </div>
         <button
-          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700"
           onClick={resetPreset}
           title="重置预设"
           type="button"
@@ -30,7 +30,7 @@ export function EffectChainPanel() {
         </button>
       </div>
 
-      <div className="rounded-lg border border-slate-200 bg-white p-3">
+      <div className="rounded-2xl border border-dashed border-indigo-100 bg-white/80 p-3">
         <div className="text-sm font-semibold text-slate-800">{metadata.label}</div>
         <div className="mt-1 text-xs text-slate-500">{metadata.description}</div>
 

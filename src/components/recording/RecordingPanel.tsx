@@ -1,4 +1,4 @@
-import { Mic, Square, X } from "lucide-react";
+import { Mic, Square, Waves, X } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { decodeArrayBuffer } from "../../audio/decode";
 import {
@@ -184,58 +184,77 @@ export function RecordingPanel({ onCancel, onError, onRecorded }: RecordingPanel
   const startDisabled = isBusy || isRecording || status === "unsupported";
 
   return (
-    <main className="flex min-h-full flex-col items-center justify-center gap-6 px-5 py-10 text-center">
-      <div className="flex max-w-xl flex-col items-center gap-3">
-        <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-          <Mic size={26} />
+    <main className="flex min-h-full items-center justify-center px-5 py-10 text-center">
+      <section className="lab-panel flex w-full max-w-md flex-col items-center gap-6 p-7">
+        <div className="flex max-w-xl flex-col items-center gap-3">
+          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-500 ring-1 ring-rose-100">
+            <Mic size={26} />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-slate-700">
+              {isRecording ? "录音中..." : "浏览器录音"}
+            </p>
+            <h1 className="mt-1 text-4xl font-light tabular-nums text-slate-950">
+              {formatTime(elapsed)}
+            </h1>
+          </div>
+          <p className="max-w-md text-sm leading-6 text-slate-500">
+            {isRecording ? "正在捕捉你的声音。" : "使用麦克风录制一段声音，完成后会自动载入编辑器。"}
+          </p>
         </div>
-        <h1 className="text-3xl font-semibold text-slate-950">浏览器录音</h1>
-        <p className="max-w-md text-sm leading-6 text-slate-500">
-          {isRecording ? "正在录制你的声音。" : "使用麦克风录制一段声音，完成后会自动载入编辑器。"}
-        </p>
-      </div>
 
-      <div className="min-w-[8rem] rounded-lg border border-slate-200 bg-white px-5 py-4">
-        <p className="text-xs font-semibold uppercase text-slate-400">Elapsed</p>
-        <p className="mt-1 text-3xl font-semibold tabular-nums text-slate-950">
-          {formatTime(elapsed)}
-        </p>
-      </div>
+        <div className="flex h-24 w-full items-center justify-center overflow-hidden rounded-2xl bg-rose-50/60 px-4">
+          {Array.from({ length: 46 }, (_, index) => (
+            <span
+              className="mx-0.5 w-1 rounded-full bg-rose-300"
+              key={index}
+              style={{
+                height: `${18 + Math.abs(Math.sin(index * 0.7 + elapsed)) * 56}px`,
+                opacity: isRecording ? 0.95 : 0.45,
+              }}
+            />
+          ))}
+        </div>
 
-      {error ? <p className="max-w-md text-sm leading-6 text-red-600">{error}</p> : null}
+        {error ? <p className="max-w-md text-sm leading-6 text-red-600">{error}</p> : null}
 
-      <div className="flex flex-wrap items-center justify-center gap-3">
-        {isRecording ? (
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          {isRecording ? (
+            <button
+              className="inline-flex h-16 w-16 items-center justify-center rounded-full border-4 border-rose-100 bg-rose-500 text-white shadow-[0_16px_32px_rgba(244,63,94,0.28)] transition hover:bg-rose-600"
+              onClick={handleStop}
+              type="button"
+            >
+              <Square size={24} fill="currentColor" />
+            </button>
+          ) : (
+            <button
+              className="lab-button-primary min-h-12 px-5 disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={startDisabled}
+              onClick={() => void handleStart()}
+              type="button"
+            >
+              <Mic size={18} />
+              {status === "requesting" ? "请求麦克风..." : "开始录音"}
+            </button>
+          )}
           <button
-            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-red-600 px-5 py-3 text-sm font-semibold text-white shadow-sm shadow-red-600/20 transition hover:bg-red-700"
-            onClick={handleStop}
+            className="lab-button min-h-12 px-5"
+            onClick={handleCancel}
             type="button"
           >
-            <Square size={18} />
-            停止录音
+            <X size={18} />
+            取消
           </button>
-        ) : (
-          <button
-            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300"
-            disabled={startDisabled}
-            onClick={() => void handleStart()}
-            type="button"
-          >
-            <Mic size={18} />
-            {status === "requesting" ? "请求麦克风..." : "开始录音"}
-          </button>
-        )}
-        <button
-          className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-800 transition hover:border-blue-300 hover:bg-blue-50"
-          onClick={handleCancel}
-          type="button"
-        >
-          <X size={18} />
-          取消
-        </button>
-      </div>
+        </div>
 
-      {status === "processing" ? <p className="text-sm text-slate-500">正在载入录音...</p> : null}
+        {status === "processing" ? (
+          <p className="inline-flex items-center gap-2 text-sm text-slate-500">
+            <Waves size={16} className="text-rose-400" />
+            正在载入录音...
+          </p>
+        ) : null}
+      </section>
     </main>
   );
 }

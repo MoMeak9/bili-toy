@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { Download, Loader2, X } from "lucide-react";
+import { Download, FlaskConical, Loader2, X } from "lucide-react";
 import { useEffect } from "react";
 import { exportProcessedAudio } from "../../audio/exportAudio";
 import type { ExportFormat, ExportStatus } from "../../audio/types";
@@ -81,11 +81,11 @@ export function ExportDialog({
   return (
     <Dialog.Root onOpenChange={handleOpenChange} open={open}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-40 bg-slate-950/45" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 flex w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 flex-col gap-5 rounded-lg bg-white p-5 shadow-xl">
+        <Dialog.Overlay className="fixed inset-0 z-40 bg-slate-950/30 backdrop-blur-sm" />
+        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 flex w-[min(25rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 flex-col gap-5 rounded-2xl border border-indigo-100 bg-white p-5 shadow-[0_24px_70px_rgba(94,96,162,0.22)]">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <Dialog.Title className="text-lg font-semibold text-slate-950">
+              <Dialog.Title className="text-lg font-bold text-slate-950">
                 导出音频
               </Dialog.Title>
               <Dialog.Description className="mt-1 text-sm text-slate-500">
@@ -95,7 +95,7 @@ export function ExportDialog({
             <Dialog.Close asChild>
               <button
                 aria-label="关闭"
-                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={exporting}
                 type="button"
               >
@@ -104,20 +104,20 @@ export function ExportDialog({
             </Dialog.Close>
           </div>
 
-          <dl className="grid gap-2 rounded-lg bg-slate-50 p-3 text-sm">
+          <dl className="grid gap-3 rounded-2xl bg-slate-50 p-3 text-sm">
             <div className="flex items-center justify-between gap-3">
               <dt className="text-slate-500">格式</dt>
               <dd
                 aria-label="导出格式"
-                className="grid grid-cols-2 rounded-md bg-white p-0.5 shadow-sm ring-1 ring-slate-200"
+                className="grid grid-cols-2 rounded-xl bg-white p-0.5 shadow-sm ring-1 ring-slate-200"
                 role="radiogroup"
               >
                 {(["wav", "mp3"] as const).map((option) => (
                   <button
                     aria-checked={format === option}
-                    className={`h-8 rounded px-3 text-xs font-semibold uppercase transition ${
+                    className={`h-8 rounded-lg px-3 text-xs font-semibold uppercase transition ${
                       format === option
-                        ? "bg-blue-600 text-white shadow-sm"
+                        ? "bg-indigo-500 text-white shadow-sm"
                         : "text-slate-500 hover:bg-slate-100"
                     } disabled:cursor-not-allowed disabled:opacity-60`}
                     disabled={exporting}
@@ -142,7 +142,7 @@ export function ExportDialog({
           </dl>
 
           {format === "mp3" ? (
-            <p className="rounded-md bg-blue-50 px-3 py-2 text-sm leading-6 text-blue-800">
+            <p className="rounded-xl bg-indigo-50 px-3 py-2 text-sm leading-6 text-indigo-800">
               首次导出 MP3 会加载本地编码器，可能稍慢；音频仍不会上传。
             </p>
           ) : null}
@@ -151,7 +151,7 @@ export function ExportDialog({
             <div className="flex flex-col gap-2">
               <div className="h-2 overflow-hidden rounded-full bg-slate-100">
                 <div
-                  className="h-full rounded-full bg-blue-600 transition-all"
+                  className="h-full rounded-full bg-indigo-500 transition-all"
                   style={{ width: `${Math.round(progress * 100)}%` }}
                 />
               </div>
@@ -162,20 +162,25 @@ export function ExportDialog({
           ) : null}
 
           {error ? (
-            <div className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+            <div className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">
               {error}
             </div>
           ) : null}
 
-          <button
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-            disabled={exporting || !buffer}
-            onClick={exportAudio}
-            type="button"
-          >
-            {exporting ? <Loader2 className="animate-spin" size={17} /> : <Download size={17} />}
-            {exporting ? "正在导出..." : "导出并下载"}
-          </button>
+          <div className="flex items-end gap-3">
+            <div className="hidden h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-500 sm:flex">
+              <FlaskConical size={25} />
+            </div>
+            <button
+              className="lab-button-primary h-11 min-h-0 flex-1 disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={exporting || !buffer}
+              onClick={exportAudio}
+              type="button"
+            >
+              {exporting ? <Loader2 className="animate-spin" size={17} /> : <Download size={17} />}
+              {exporting ? "正在导出..." : "导出"}
+            </button>
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

@@ -16,8 +16,8 @@ export function ToastLayer({
   return (
     <Toast.Provider duration={4200} swipeDirection="right">
       <Toast.Root
-        className={`rounded-lg px-4 py-3 text-sm text-white shadow-lg ${
-          variant === "error" ? "bg-red-600" : "bg-slate-900"
+        className={`rounded-2xl px-4 py-3 text-sm text-white shadow-lg ${
+          variant === "error" ? "bg-rose-500" : "bg-slate-900"
         }`}
         onOpenChange={onOpenChange}
         open={open}
