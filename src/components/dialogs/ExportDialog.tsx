@@ -89,7 +89,7 @@ export function ExportDialog({
                 导出音频
               </Dialog.Title>
               <Dialog.Description className="mt-1 text-sm text-slate-500">
-                WAV · 整段 · 本地离线渲染
+                {format.toUpperCase()} · 整段 · 本地离线渲染
               </Dialog.Description>
             </div>
             <Dialog.Close asChild>
@@ -140,6 +140,12 @@ export function ExportDialog({
               <dd className="font-medium text-slate-800">{statusLabel(status)}</dd>
             </div>
           </dl>
+
+          {format === "mp3" ? (
+            <p className="rounded-md bg-blue-50 px-3 py-2 text-sm leading-6 text-blue-800">
+              首次导出 MP3 会加载本地编码器，可能稍慢；音频仍不会上传。
+            </p>
+          ) : null}
 
           {exporting ? (
             <div className="flex flex-col gap-2">
