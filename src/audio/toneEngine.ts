@@ -106,7 +106,10 @@ class ToneEngine {
   async play(): Promise<void> {
     if (!this.player || this.playing) return;
     const Tone = await this.ensureTone();
-    void Tone.start();
+    void Tone.start().catch(() => {
+      // The browser may keep AudioContext suspended until a direct gesture;
+      // playback UI should not hang behind that resume attempt.
+    });
     const offset = this.offsetAt;
     this.player.start(undefined, offset);
     this.startedAt = Tone.now();
