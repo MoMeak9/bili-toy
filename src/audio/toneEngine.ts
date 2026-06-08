@@ -133,6 +133,11 @@ class ToneEngine {
     if (wasPlaying) void this.play();
   }
 
+  // 相对当前播放位置快进/快退（秒）
+  seekBy(delta: number): void {
+    this.seek(this.currentPos() + delta);
+  }
+
   duration(): number {
     return this.buffer ? this.buffer.duration : 0;
   }

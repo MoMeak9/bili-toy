@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { decodeArrayBuffer, decodeFile } from "../audio/decode";
 import { enterEditorWithBuffer } from "../audio/loadAudio";
+import { PRESET_LIST } from "../audio/presets";
 import { engine } from "../audio/toneEngine";
 import { LoadingPanel } from "../components/common/LoadingPanel";
 import { ToastLayer } from "../components/common/ToastLayer";
@@ -24,6 +25,7 @@ type ToastState = {
 
 const EDITOR_HINT_SESSION_KEY = "local-audio-lab-editor-keyboard-hint-shown";
 const EDITOR_HINT_MESSAGE = "提示：按 Space 播放/暂停，按 ? 查看全部快捷键。";
+const SAMPLE_HINT_MESSAGE = "试试点击「机器人」或「魔鬼低音」听听效果。";
 
 export default function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -36,6 +38,9 @@ export default function App() {
   const resetEditor = useEditorStore((state) => state.reset);
   const setPlayhead = useEditorStore((state) => state.setPlayhead);
   const setPlaying = useEditorStore((state) => state.setPlaying);
+  const setAB = useEditorStore((state) => state.setAB);
+  const setPreset = useEditorStore((state) => state.setPreset);
+  const setHighlightPresets = useEditorStore((state) => state.setHighlightPresets);
   const [exportOpen, setExportOpen] = useState(false);
   const [shortcutOpen, setShortcutOpen] = useState(false);
   const [toast, setToast] = useState<ToastState>({
@@ -106,7 +111,8 @@ export default function App() {
       if (!response.ok) throw new Error("示例音频加载失败。");
       const buffer = await decodeArrayBuffer(await response.arrayBuffer());
       await enterEditorWithBuffer({ buffer, fileName: "示例音频.wav", source: "sample" });
-      showEditorHintOnce();
+      setHighlightPresets(true);
+      setToast({ open: true, message: SAMPLE_HINT_MESSAGE, variant: "info" });
     } catch (caught) {
       fail(caught instanceof Error ? caught.message : "示例音频加载失败。");
     }
@@ -133,9 +139,35 @@ export default function App() {
     setPlaying(true);
   };
 
+  const handleSeek = (delta: number) => {
+    if (mode !== "editor") return;
+    engine.seekBy(delta);
+  };
+
+  const handleToggleAB = () => {
+    if (mode !== "editor") return;
+    const next = useEditorStore.getState().abState === "A" ? "B" : "A";
+    setAB(next);
+    engine.setABState(next);
+  };
+
+  const handleSelectPreset = (index: number) => {
+    if (mode !== "editor") return;
+    const preset = PRESET_LIST[index];
+    if (!preset) return;
+    setHighlightPresets(false);
+    setPreset(preset.id);
+    setAB("B");
+    engine.applyPreset(preset.id);
+    engine.setABState("B");
+  };
+
   useKeyboardShortcuts({
     onShowShortcuts: () => setShortcutOpen(true),
     onTogglePlay: togglePlayback,
+    onSeek: handleSeek,
+    onToggleAB: handleToggleAB,
+    onSelectPreset: handleSelectPreset,
   });
 
   const showError = (message: string) => {

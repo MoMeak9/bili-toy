@@ -13,8 +13,11 @@ export function PresetPanel({ compact = false }: PresetPanelProps) {
   const currentPreset = useEditorStore((state) => state.currentPreset);
   const setAB = useEditorStore((state) => state.setAB);
   const setPreset = useEditorStore((state) => state.setPreset);
+  const highlightPresets = useEditorStore((state) => state.highlightPresets);
+  const setHighlightPresets = useEditorStore((state) => state.setHighlightPresets);
 
   const choosePreset = (id: PresetId) => {
+    if (highlightPresets) setHighlightPresets(false);
     setPreset(id);
     setAB("B");
     engine.applyPreset(id);
@@ -22,7 +25,11 @@ export function PresetPanel({ compact = false }: PresetPanelProps) {
   };
 
   return (
-    <section className="flex flex-col gap-3">
+    <section
+      className={`flex flex-col gap-3 rounded-2xl transition ${
+        highlightPresets ? "p-2 ring-2 ring-indigo-400 ring-offset-2" : ""
+      }`}
+    >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-sm font-bold text-slate-800">
           <Wand2 size={16} className="text-indigo-500" />
