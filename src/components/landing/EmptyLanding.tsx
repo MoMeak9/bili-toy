@@ -18,7 +18,7 @@ export function EmptyLanding({ onUpload, onSample, onRecording }: EmptyLandingPr
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 ring-1 ring-indigo-100">
             <Sparkles size={24} />
           </div>
-          <h1 className="text-3xl font-bold text-slate-950 sm:text-4xl">本地音频实验室</h1>
+          <h1 className="text-3xl font-bold text-slate-950 sm:text-4xl">百变小音</h1>
           <p className="mt-3 max-w-xl text-sm leading-6 text-slate-500">
             基于 Tone.js 的本地音频编辑器，变声与音效的秘密武器。
           </p>

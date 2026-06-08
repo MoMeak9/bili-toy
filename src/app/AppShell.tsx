@@ -29,7 +29,7 @@ export function AppShell({ onExport, onRecording, onUpload }: AppShellProps) {
             >
               <Menu size={19} />
             </button>
-            <div className="text-sm font-bold text-slate-950">本地音频实验室</div>
+            <div className="text-sm font-bold text-slate-950">百变小音</div>
             <button
               aria-label="设置"
               className="flex h-9 w-9 items-center justify-center rounded-xl text-slate-600 hover:bg-indigo-50"

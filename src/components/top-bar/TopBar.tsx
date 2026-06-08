@@ -24,7 +24,7 @@ export function TopBar({ onExport, onNewProject, onShortcuts }: TopBarProps) {
         </div>
         <div className="min-w-0">
           <div className="truncate text-sm font-bold text-slate-950 sm:text-lg">
-            本地音频实验室
+            百变小音
           </div>
           <div className="hidden text-xs text-slate-400 sm:block">
             基于 Tone.js · 本地处理 · 安全隐私

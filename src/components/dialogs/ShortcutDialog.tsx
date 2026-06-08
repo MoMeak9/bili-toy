@@ -24,7 +24,7 @@ export function ShortcutDialog({ open, onOpenChange }: ShortcutDialogProps) {
           <div className="flex items-start justify-between gap-4">
             <Dialog.Title className="text-lg font-bold text-slate-950">键盘快捷键</Dialog.Title>
             <Dialog.Description className="sr-only">
-              查看本地音频实验室支持的键盘操作。
+              查看百变小音支持的键盘操作。
             </Dialog.Description>
             <Dialog.Close asChild>
               <button
